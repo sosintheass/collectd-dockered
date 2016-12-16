@@ -1,5 +1,5 @@
-FROM debian:jessie
-MAINTAINER Carles Amigó, fr3nd@fr3nd.net
+FROM ubuntu:xenial
+MAINTAINER Ivan Golubnichiy <h1kkan@itsyndicate.org>
 
 
 RUN apt-get update && apt-get install -y \
@@ -52,7 +52,7 @@ RUN apt-get update && apt-get install -y \
       rm -rf /tmp/* && \
       rm -rf /var/tmp/*
 
-ENV COLLECTD_VERSION collectd-5.5.0
+ENV COLLECTD_VERSION collectd-5.7
 
 WORKDIR /usr/src
 RUN git clone https://github.com/collectd/collectd.git
