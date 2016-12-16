@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
       build-essential \
       curl \
       flex \
+      nano \
+      mc \
       git \
       iptables-dev \
       libcurl4-gnutls-dev \
@@ -50,7 +52,14 @@ RUN apt-get update && apt-get install -y \
       rm -rf /usr/share/doc/* && \
       rm -rf /usr/share/info/* && \
       rm -rf /tmp/* && \
-      rm -rf /var/tmp/*
+      rm -rf /var/tmp/* \
+      && apt-get autoclean \
+      && apt-get clean \
+      && apt-get autoremove -y \
+      && rm -rf /var/lib/apt/lists/* \
+      && rm -rf /usr/share/man/* \
+      && rm -rf /usr/share/info/* \
+      && rm -rf /var/cache/man/* 
 
 ENV COLLECTD_VERSION collectd-5.7
 
