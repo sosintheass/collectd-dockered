@@ -77,7 +77,7 @@ RUN ./configure \
 RUN make all
 RUN make install
 RUN make clean
-ADD collectd.conf /etc/collectd/
+ADD conf/collectd.conf /etc/collectd/
 ADD entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
