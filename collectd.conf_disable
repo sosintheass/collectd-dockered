@@ -1,4 +1,10 @@
-FQDNLookup false
+
+#Hostname    "localhost"
+FQDNLookup   false
+#BaseDir     "${prefix}/var/lib/collectd"
+#PIDFile     "${prefix}/var/run/collectd.pid"
+#PluginDir   "${exec_prefix}/lib/collectd"
+#TypesDB     "/usr/share/collectd/types.db"
 
 Interval     10
 Timeout 2
@@ -7,10 +13,10 @@ WriteQueueLimitHigh 500000
 WriteQueueLimitLow  400000
 CollectInternalStats False
 
-LoadPlugin syslog
 
+LoadPlugin syslog
 <Plugin syslog>
-    LogLevel info
+	LogLevel info
 </Plugin>
 
 LoadPlugin cpu
@@ -21,15 +27,39 @@ LoadPlugin interface
 LoadPlugin load
 LoadPlugin memory
 LoadPlugin processes
-LoadPlugin match_regex
 LoadPlugin aggregation
+LoadPlugin match_regex
 LoadPlugin write_graphite
+
+<Plugin "aggregation">
+  <Aggregation>
+    Plugin "cpu"
+    Type "cpu"
+    GroupBy "Host"
+    GroupBy "TypeInstance"
+    CalculateAverage true
+  </Aggregation>
+</Plugin>
 
 <Plugin "cpu">
     ValuesPercentage true
 </Plugin>
 
-<Plugin "df">
+<Chain "PostCache">
+  <Rule>
+    <Match regex>
+      Plugin "^cpu$"
+      PluginInstance "^[0-9]+$"
+    </Match>
+    <Target write>
+      Plugin "aggregation"
+    </Target>
+    Target stop
+  </Rule>
+  Target "write"
+</Chain>
+
+<Plugin "df"> 
   MountPoint  "/hostfs"
   IgnoreSelected false
   ValuesAbsolute true
@@ -37,10 +67,10 @@ LoadPlugin write_graphite
   ReportInodes false
 </Plugin>
 
-<Plugin "disk">
-  Disk "/^loop\d+$/"
-  Disk "/^dm-\d+$/"
-  IgnoreSelected "true"
+<Plugin "disk"> 
+  Disk "/^loop\d+$/" 
+  Disk "/^dm-\d+$/" 
+  IgnoreSelected "true" 
 </Plugin>
 
 <Plugin interface>
@@ -49,6 +79,7 @@ LoadPlugin write_graphite
   Interface "/^docker.*/"
   IgnoreSelected true
 </Plugin>
+
 
 <Plugin write_graphite>
         <Node "graphite">
